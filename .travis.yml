@@ -24,6 +24,7 @@ matrix:
       rust: stable
       env:
         - TARGET=arm-unknown-linux-gnueabihf
+        - CC_arm_unknown_linux_gnueabihf=/usr/bin/arm-linux-gnueabihf-gcc-4.8
         - CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc-4.8
     - os: linux
       rust: stable
@@ -49,10 +50,11 @@ matrix:
     #   rust: beta
     #   env: TARGET=x86_64-apple-darwin
 
-    # Nightly channel.
-    - os: linux
-      rust: nightly
-      env: TARGET=x86_64-unknown-linux-gnu
+    # switch off nightly due to crossbeam errors
+    # # Nightly channel.
+    # - os: linux
+    #   rust: nightly
+    #   env: TARGET=x86_64-unknown-linux-gnu
     # Disabled to reduce total CI time
     # - os: linux
     #   rust: nightly
@@ -85,12 +87,12 @@ matrix:
       env: TARGET=x86_64-apple-darwin
 
     # Code formatting check
-    - os: linux
-      rust: nightly
-      # skip the global install step
-      install:
-        - cargo install --debug --force rustfmt-nightly
-      script: cargo fmt -- --check
+    # - os: linux
+    #   rust: nightly
+    #   # skip the global install step
+    #   install:
+    #     - cargo install --debug --force rustfmt-nightly
+    #   script: cargo fmt -- --check
 
 sudo: required
 

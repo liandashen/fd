@@ -38,6 +38,9 @@ or
 .I .fdignore
 files.
 .TP
+.B \-u, \-\-unrestricted
+Alias for '--no-ignore'. Can be repeated; '-uu' is an alias for '--no-ignore --hidden'.
+.TP
 .B \-\-no\-ignore\-vcs
 Show search results from files and directories that would otherwise be ignored by
 .I .gitignore
@@ -50,6 +53,12 @@ pattern contains an uppercase character (smart case).
 .B \-i, \-\-ignore\-case
 Perform a case-insensitive search. By default, fd uses case-insensitive searches, unless the
 pattern contains an uppercase character (smart case).
+.TP
+.B \-g, \-\-glob
+Perform a glob-based search instead of a regular expression search.
+.TP
+.B \-\-regex
+Perform a regular-expression based seach (default). This can be used to override --glob.
 .TP
 .B \-F, \-\-fixed\-strings
 Treat the pattern as a literal string instead of a regular expression.
@@ -133,7 +142,7 @@ Always colorize output.
 .RE
 .TP
 .BI "\-j, \-\-threads " num
-Number of threads to use for searching (default: number of available CPUs).
+Set number of threads to use for searching & executing (default: number of available CPU cores).
 .TP
 .BI "\-S, \-\-size " size
 Limit results based on the size of files using the format
@@ -224,6 +233,16 @@ path without file extension
 .IP {/.}
 basename without file extension
 .RE
+.SH PATTERN SYNTAX
+The regular expression syntax used by fd is documented here:
+
+.UR https://docs.rs/regex/1.0.0/regex/#syntax
+.UE
+
+The glob syntax is documented here:
+
+.UR https://docs.rs/globset/#syntax
+.UE
 .SH ENVIRONMENT
 .TP
 .B LS_COLORS

@@ -123,6 +123,8 @@ fd -e flac -x ffmpeg -i {} -c:a libopus {.}.opus
 fd -x wc -l \; -e rs
 ```
 
+The number of threads used for command execution can be set with the `--threads`/`-j` option.
+
 ## Installation
 
 ### On Ubuntu
@@ -140,7 +142,7 @@ use `fd` in the same way as in this documentation.
 If you use an older version of Ubuntu, you can download the latest `.deb` package from the
 [release page](https://github.com/sharkdp/fd/releases) and install it via:
 ``` bash
-sudo dpkg -i fd_7.3.0_amd64.deb  # adapt version number and architecture
+sudo dpkg -i fd_7.4.0_amd64.deb  # adapt version number and architecture
 ```
 
 ### On Debian
@@ -242,14 +244,6 @@ You can install [the fd-find package](https://www.freshports.org/sysutils/fd) fr
 pkg install fd-find
 ```
 
-### On OpenBSD
-You can install the [fd-find](https://gitlab.com/epbsd/ports/tree/master/sysutils/fd) package from the [EPBSD](https://epbsd.org/) repo:
-```
-ftp -o /etc/signify/epbsd-pkg.pub https://epbsd.org/epbsd-pkg.pub
-export PKG_PATH=https://repo.epbsd.org/pub/OpenBSD/$(arch -s):${PKG_PATH}
-pkg_add fd
-```
-
 ### From NPM
 
 On linux and macOS, you can install the [fd-find](https://npm.im/fd-find) package:
@@ -296,6 +290,7 @@ FLAGS:
         --no-ignore-vcs     Do not respect .gitignore files
     -s, --case-sensitive    Case-sensitive search (default: smart case)
     -i, --ignore-case       Case-insensitive search (default: smart case)
+    -g, --glob              Glob-based search (default: regular expression)
     -F, --fixed-strings     Treat the pattern as a literal string
     -a, --absolute-path     Show absolute instead of relative paths
     -L, --follow            Follow symbolic links
@@ -318,7 +313,7 @@ OPTIONS:
         --changed-before <date|dur>    Filter by file modification time (older than)
 
 ARGS:
-    <pattern>    the search pattern, a regular expression (optional)
+    <pattern>    the search pattern: a regular expression unless '--glob' is used (optional)
     <path>...    the root directory for the filesystem search (optional)
 ```
 

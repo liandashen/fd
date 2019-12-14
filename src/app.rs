@@ -46,37 +46,87 @@ pub fn build_app() -> App<'static, 'static> {
             "Note: `fd -h` prints a short and concise overview while `fd --help` \
              gives all details.",
         )
-        .arg(arg("hidden").long("hidden").short("H"))
-        .arg(arg("no-ignore").long("no-ignore").short("I"))
-        .arg(arg("no-ignore-vcs").long("no-ignore-vcs"))
+        .arg(
+            arg("hidden")
+                .long("hidden")
+                .short("H")
+                .overrides_with("hidden"),
+        )
+        .arg(
+            arg("no-ignore")
+                .long("no-ignore")
+                .short("I")
+                .overrides_with("no-ignore"),
+        )
+        .arg(
+            arg("no-ignore-vcs")
+                .long("no-ignore-vcs")
+                .overrides_with("no-ignore-vcs"),
+        )
         .arg(
             arg("rg-alias-hidden-ignore")
                 .short("u")
+                .long("unrestricted")
                 .multiple(true)
-                .hidden(true),
+                .hidden_short_help(true),
         )
         .arg(
             arg("case-sensitive")
                 .long("case-sensitive")
                 .short("s")
-                .overrides_with("ignore-case"),
+                .overrides_with_all(&["ignore-case", "case-sensitive"]),
         )
         .arg(
             arg("ignore-case")
                 .long("ignore-case")
                 .short("i")
-                .overrides_with("case-sensitive"),
+                .overrides_with_all(&["case-sensitive", "ignore-case"]),
+        )
+        .arg(
+            arg("glob")
+                .long("glob")
+                .short("g")
+                .conflicts_with("fixed-strings")
+                .overrides_with("glob"),
+        )
+        .arg(
+            arg("regex")
+                .long("regex")
+                .overrides_with_all(&["glob", "regex"])
+                .hidden_short_help(true),
         )
         .arg(
             arg("fixed-strings")
                 .long("fixed-strings")
                 .short("F")
-                .alias("literal"),
+                .alias("literal")
+                .overrides_with("fixed-strings"),
         )
-        .arg(arg("absolute-path").long("absolute-path").short("a"))
-        .arg(arg("follow").long("follow").short("L").alias("dereference"))
-        .arg(arg("full-path").long("full-path").short("p"))
-        .arg(arg("null_separator").long("print0").short("0"))
+        .arg(
+            arg("absolute-path")
+                .long("absolute-path")
+                .short("a")
+                .overrides_with("absolute-path"),
+        )
+        .arg(
+            arg("follow")
+                .long("follow")
+                .short("L")
+                .alias("dereference")
+                .overrides_with("follow"),
+        )
+        .arg(
+            arg("full-path")
+                .long("full-path")
+                .short("p")
+                .overrides_with("full-path"),
+        )
+        .arg(
+            arg("null_separator")
+                .long("print0")
+                .short("0")
+                .overrides_with("print0"),
+        )
         .arg(arg("depth").long("max-depth").short("d").takes_value(true))
         // support --maxdepth as well, for compatibility with rg
         .arg(
@@ -204,9 +254,17 @@ pub fn build_app() -> App<'static, 'static> {
         .arg(
             arg("show-errors")
                 .long("show-errors")
-                .hidden_short_help(true),
+                .hidden_short_help(true)
+                .overrides_with("show-errors"),
         )
         .arg(arg("pattern"))
+        .arg(
+            arg("path-separator")
+                .takes_value(true)
+                .value_name("separator")
+                .long("path-separator")
+                .hidden_short_help(true),
+        )
         .arg(arg("path").multiple(true))
         .arg(
             arg("search-path")
@@ -243,12 +301,22 @@ fn usage() -> HashMap<&'static str, Help> {
         , "Case-insensitive search (default: smart case)"
         , "Perform a case-insensitive search. By default, fd uses case-insensitive searches, \
            unless the pattern contains an uppercase character (smart case).");
+    doc!(h, "glob"
+        , "Glob-based search (default: regular expression)"
+        , "Perform a glob-based search instead of a regular expression search.");
+    doc!(h, "regex"
+        , "Perform a regex-based search"
+        , "Perform a regular-expression based seach (default). This can be used to override --glob.");
     doc!(h, "fixed-strings"
         , "Treat the pattern as a literal string"
         , "Treat the pattern as a literal string instead of a regular expression.");
     doc!(h, "absolute-path"
         , "Show absolute instead of relative paths"
         , "Shows the full path starting from the root as opposed to relative paths.");
+    doc!(h, "path-separator"
+        , "Set the path separator to use when printing file paths."
+        , "Set the path separator to use when printing file paths. The default is the OS-specific \
+           separator ('/' on Unix, '\\' on Windows).");
     doc!(h, "follow"
         , "Follow symbolic links"
         , "By default, fd does not descend into symlinked directories. Using this flag, symbolic \
@@ -326,14 +394,14 @@ fn usage() -> HashMap<&'static str, Help> {
         , "Amount of time in milliseconds to buffer, before streaming the search results to \
            the console.");
     doc!(h, "pattern"
-        , "the search pattern, a regular expression (optional)");
+        , "the search pattern: a regular expression unless '--glob' is used (optional)");
     doc!(h, "path"
         , "the root directory for the filesystem search (optional)"
         , "The directory where the filesystem search is rooted (optional). \
            If omitted, search the current working directory.");
     doc!(h, "rg-alias-hidden-ignore"
-        , "Alias for no-ignore and/or hidden"
-        , "Alias for no-ignore ('u') and no-ignore and hidden ('uu')");
+        , ""
+        , "Alias for '--no-ignore'. Can be repeated; '-uu' is an alias for '--no-ignore --hidden'.");
     doc!(h, "size"
         , "Limit results based on the size of files."
         , "Limit results based on the size of files using the format <+-><NUM><UNIT>.\n   \

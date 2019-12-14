@@ -37,13 +37,13 @@ impl SizeFilter {
 
         let multiplier = match &captures.get(3).map_or("b", |m| m.as_str()).to_lowercase()[..] {
             v if v.starts_with("ki") => KIBI,
-            v if v.starts_with("k") => KILO,
+            v if v.starts_with('k') => KILO,
             v if v.starts_with("mi") => MEBI,
-            v if v.starts_with("m") => MEGA,
+            v if v.starts_with('m') => MEGA,
             v if v.starts_with("gi") => GIBI,
-            v if v.starts_with("g") => GIGA,
+            v if v.starts_with('g') => GIGA,
             v if v.starts_with("ti") => TEBI,
-            v if v.starts_with("t") => TERA,
+            v if v.starts_with('t') => TERA,
             "b" => 1,
             _ => return None,
         };
@@ -80,8 +80,8 @@ mod tests {
         };
     }
 
-    /// Parsing and size conversion tests data. Ensure that each type gets properly interpreted.
-    /// Call with higher base values to ensure expected multiplication (only need a couple)
+    // Parsing and size conversion tests data. Ensure that each type gets properly interpreted.
+    // Call with higher base values to ensure expected multiplication (only need a couple)
     gen_size_filter_parse_test! {
         byte_plus:                ("+1b",     SizeFilter::Min(1)),
         byte_plus_multiplier:     ("+10b",    SizeFilter::Min(10)),
@@ -168,7 +168,7 @@ mod tests {
         };
     }
 
-    /// Invalid parse data
+    // Invalid parse data
     gen_size_filter_failure! {
         ensure_missing_symbol_returns_none: "10M",
         ensure_missing_number_returns_none: "+g",
